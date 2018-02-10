@@ -6,7 +6,8 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-    quotes: ''
+    quotes: '',
+    page: ''
     }
   }
 
@@ -18,7 +19,7 @@ class App extends Component {
     );
   }
 
-  getData() {
+ getPage(grabPageID) {
     $.ajax({
       url: 'https://en.wikiquote.org/w/api.php',
       dataType: 'jsonp',
@@ -27,7 +28,7 @@ class App extends Component {
         generator: 'search',
         utf8: '1',
         format: 'json',
-        gsrsearch: 'Einstein',
+        gsrsearch: 'Harry Potter',
         prop: 'extracts',
         exintro: '1',
         exlimit: '20',
@@ -40,8 +41,34 @@ class App extends Component {
         var key = Object.keys(o)[idx];
         var value = o[key];
         console.log(value.pageid);
-      }.bind(this),
+        grabPageID(value.pageid);
 
+      },
+
+      error: function(xhr, status, err) {
+        console.log('hi');
+      }
+    })
+  }
+
+  getData(page, callback) {
+    let p = String(page);
+    $.ajax({
+      url: 'https://en.wikiquote.org/w/api.php',
+      dataType: 'jsonp',
+      data: {
+        action: 'query',
+        pageids: page + '',
+        prop: 'revisions',
+        rvprop: 'content',
+        format: 'json',
+        formatversion: '2'
+      },
+      cache: false,
+      success: function(pageData) {
+        console.log(pageData);
+        callback(pageData);
+      }.bind(this),
       error: function(xhr, status, err) {
         console.log(err);
       }
@@ -49,12 +76,26 @@ class App extends Component {
   }
 
   componentWillMount() {
-    this.setState();
-    this.getData();
+    let p = '';
+    var page = this.getPage(function(pageId){
+      console.log(pageId);
+      this.getData(pageId, function(revisions) {
+        p = revisions;
+      });
+    }.bind(this));
+
   }
 
   componentDidMount() {
-    this.getData();
+    let p = '';
+    var page = this.getPage(function(pageId){
+      console.log(pageId);
+      this.getData(pageId, function(revisions) {
+        p = revisions;
+      });
+    }.bind(this));
+
+
   }
 }
 
