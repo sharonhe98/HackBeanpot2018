@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import $ from 'jquery';
 
+
 class App extends Component {
   constructor() {
     super();
@@ -21,15 +22,17 @@ class App extends Component {
 
  getPage(grabPageID) {
     $.ajax({
+      async: false,
       url: 'https://en.wikiquote.org/w/api.php',
       dataType: 'jsonp',
       data: {
         action: 'query',
         list: 'search',
-        srsearch: 'Harry Potter and the Sorcerers Stone',
+        srsearch: 'Fury Road',
         utf8: '',
         format: 'json',
       },
+
       cache: false,
       success: function(thing) {
         console.log(thing);
@@ -47,6 +50,7 @@ class App extends Component {
   getData(page, callback) {
     let p = String(page);
     $.ajax({
+      async: false,
       url: 'https://en.wikiquote.org/w/api.php',
       dataType: 'jsonp',
       data: {
@@ -68,6 +72,13 @@ class App extends Component {
     })
   }
 
+  parseString(messy) {
+    var re = /[a-zA-Z,'\s]+[.?!]/g;
+    var matches = messy.match(re);
+    console.log(matches);
+
+  }
+
   componentWillMount() {
     let p = '';
     var page = this.getPage(function(pageId){
@@ -75,6 +86,7 @@ class App extends Component {
       this.getData(pageId, function(revisions) {
         console.log(revisions);
         var thing = revisions.query.pages[0].revisions[0].content;
+        this.parseString(thing);
         this.setState({quotes: thing});
         console.log(thing);
       }.bind(this));
@@ -89,6 +101,7 @@ class App extends Component {
       this.getData(pageId, function(revisions) {
         console.log(revisions);
         var thing = revisions.query.pages[0].revisions[0].content;
+        this.parseString(thing);
         this.setState({quotes: thing});
         console.log(thing);
 
