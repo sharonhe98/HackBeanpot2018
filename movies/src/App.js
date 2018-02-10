@@ -66,7 +66,7 @@ class App extends Component {
       },
       cache: false,
       success: function(pageData) {
-        console.log(pageData);
+      //  console.log(pageData);
         callback(pageData);
       }.bind(this),
       error: function(xhr, status, err) {
@@ -80,8 +80,11 @@ class App extends Component {
     var page = this.getPage(function(pageId){
       console.log(pageId);
       this.getData(pageId, function(revisions) {
-        p = revisions;
-      });
+        console.log(revisions);
+        var thing = revisions.query.pages[0].revisions[0].content;
+        this.setState({quotes: thing});
+        console.log(thing);
+      }.bind(this));
     }.bind(this));
 
   }
@@ -91,8 +94,12 @@ class App extends Component {
     var page = this.getPage(function(pageId){
       console.log(pageId);
       this.getData(pageId, function(revisions) {
-        p = revisions;
-      });
+        console.log(revisions);
+        var thing = revisions.query.pages[0].revisions[0].content;
+        this.setState({quotes: thing});
+        console.log(thing);
+
+      }.bind(this));
     }.bind(this));
 
 
