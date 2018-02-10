@@ -1,0 +1,11 @@
+- beginning of Json files (we don't want this within our quote parsing)
+      -shown with "==" (double equals)
+      -some sort of tag?
+
+- dialogue is not in quotes, but ACTIONS are in SQUARE BRACKETS ("[" and "]")
+      -everything in between is an action, not a quote
+      -alternatively: ''[...]''
+      -alternatively again: ''(...)'' <-- basically if you see TWO single quotes, ignore anything in between
+      
+- speakers are separated in a template from dialogue itself
+      -speaker template is something like "colon three single quotes x three single quotes colon" (:'''Harry''':)
