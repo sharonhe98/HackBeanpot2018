@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
 import $ from 'jquery';
-import indico from 'indico.io';
-
-
-
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
     quotes: [],
-    page: ''
+    page: '',
+    pageTitle: 'Home',
     }
   }
 
@@ -33,6 +30,7 @@ render() {
     <div className="App">
       <div className="Search">
       <h1>Search WikiQuotes</h1>
+      <h2>You are looking at: {this.state.pageTitle}</h2>
       <form onSubmit={this.handleSubmit.bind(this)}>
           <div>
               <label>Search</label><br />
@@ -40,9 +38,9 @@ render() {
           </div>
           <input type="submit" value="Search" />
       </form>
-
     </div>
       <p>{this.state.quotes}</p>
+
     </div>
   );
 }
@@ -64,8 +62,13 @@ render() {
       success: function(thing) {
         console.log(thing);
         var o = thing.query.search;
+        if (o[0] === undefined) {
+          grabPageID(-1, 'Bad Search');
+        } else {
         var idx = o[0].pageid;
-        grabPageID(idx);
+        var title = o[0].title;
+        grabPageID(idx, title);
+      }
       },
 
       error: function(xhr, status, err) {
@@ -107,7 +110,9 @@ render() {
         'data': data,
         'threshold': 0.1
       })
-    ).then(function(res) {console.log(res)});
+    ).then(function(res) {
+      console.log(res);
+    });
   }
 
   parseString(messy) {
@@ -118,16 +123,25 @@ render() {
   }
 
   getQuotes(searchItem) {
-     var page = this.getPage(function(pageId){
+     var page = this.getPage(function(pageId, tle){
+       if (pageId === -1) {
+         this.setState({pageTitle: 'Bad search'});
+         this.setState({quotes: ['THIS IS A BAD SEARCH']});
+       } else {
        console.log(pageId);
+       this.setState({pageTitle: tle});
+       this.setState({isBadSearch: false});
        this.getData(pageId, function(revisions) {
-         console.log(revisions);
+         console.log(this.state.pageTitle);
          var thing = revisions.query.pages[0].revisions[0].content;
          var arr = this.parseString(thing);
+         if (arr === null) {
+           this.setState({quotes: ['Please be more specific']});
+         } else {
          this.setState({quotes: arr});
-         console.log(thing);
+       }
        }.bind(this));
-     }.bind(this), searchItem);
+    } }.bind(this), searchItem);
 
    }
 
