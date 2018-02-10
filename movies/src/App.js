@@ -6,9 +6,13 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-    quotes: [],
-    page: '',
     pageTitle: 'Home',
+    anger: 0,
+    joy: 0,
+    fear: 0,
+    sadness: 0,
+    surprise: 0
+
     }
   }
 
@@ -39,7 +43,7 @@ render() {
           <input type="submit" value="Search" />
       </form>
     </div>
-      <p>{this.state.quotes}</p>
+      <p></p>
 
     </div>
   );
@@ -102,18 +106,49 @@ render() {
     })
   }
 
-  getEmote(data) {
+  getEmote(data, callback) {
     $.post(
       'https://apiv2.indico.io/emotion/batch',
-      JSON.stringify({
+    JSON.stringify({
         'api_key': "601a9a72cc56692d1f388c608fa955b8",
-        'data': data,
-        'threshold': 0.1
+        'data': data
       })
+
     ).then(function(res) {
-      console.log(res);
+      console.log(typeof res);
+      callback(JSON.parse(res));
     });
   }
+
+  // to calculate average emotions for compilation of quotes
+ calcEmote(data) {
+   var a = 0;
+   var b = 0;
+   var c = 0;
+   var d = 0;
+   var e = 0;
+   for (var x = 0; x < data.length; x++) {
+     a += data[x].anger;
+     b += data[x].joy;
+     c += data[x].fear;
+     d += data[x].sadness;
+     e += data[x].surprise;
+   }
+
+    a = a / data.length;
+    b = b / data.length;
+    c = c / data.length;
+    d = d / data.length;
+    e = e / data.length;
+    console.log(a);
+    this.setState({anger: a});
+     this.setState({joy: b});
+     this.setState({fear: c});
+     this.setState({sadness: d});
+    this.setState({surprise: e});
+    console.log(this.state);
+
+ }
 
   parseString(messy) {
     var re = /[a-zA-Z,'-\s]+[.?!]/g;
@@ -126,6 +161,7 @@ render() {
      var page = this.getPage(function(pageId, tle){
        if (pageId === -1) {
          this.setState({pageTitle: 'Bad search'});
+
          this.setState({quotes: ['THIS IS A BAD SEARCH']});
        } else {
        console.log(pageId);
@@ -138,7 +174,9 @@ render() {
          if (arr === null) {
            this.setState({quotes: ['Please be more specific']});
          } else {
-         this.setState({quotes: arr});
+         var emotions = this.getEmote(arr, function(dataset){
+           this.calcEmote(dataset.results);
+         }.bind(this));
        }
        }.bind(this));
     } }.bind(this), searchItem);
