@@ -32,7 +32,7 @@ render() {
   return (
     <div className="App">
       <div className="Search">
-      <h1>Add Project</h1>
+      <h1>Search WikiQuotes</h1>
       <form onSubmit={this.handleSubmit.bind(this)}>
           <div>
               <label>Search</label><br />
