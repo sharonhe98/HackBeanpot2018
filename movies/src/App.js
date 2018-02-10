@@ -25,24 +25,17 @@ class App extends Component {
       dataType: 'jsonp',
       data: {
         action: 'query',
-        generator: 'search',
-        utf8: '1',
+        list: 'search',
+        srsearch: 'Harry Potter and the Sorcerers Stone',
+        utf8: '',
         format: 'json',
-        gsrsearch: 'Harry Potter',
-        prop: 'extracts',
-        exintro: '1',
-        exlimit: '20',
-        exchars: '200'
       },
       cache: false,
       success: function(thing) {
-        var o = thing.query.pages;
-        var idx = 0;
-        var key = Object.keys(o)[idx];
-        var value = o[key];
-        console.log(value.pageid);
-        grabPageID(value.pageid);
-
+        console.log(thing);
+        var o = thing.query.search;
+        var idx = o[0].pageid;
+        grabPageID(idx);
       },
 
       error: function(xhr, status, err) {
