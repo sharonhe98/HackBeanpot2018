@@ -11,7 +11,12 @@ class App extends Component {
     joy: 0,
     fear: 0,
     sadness: 0,
-    surprise: 0
+    surprise: 0,
+    beginning: '',
+    quoteType: "",
+    quote: "",
+    quoteTypeTwo: "",
+    quoteTwo: "",
 
     }
   }
@@ -34,7 +39,7 @@ render() {
     <div className="App">
       <div className="Search">
       <h1>Search WikiQuotes</h1>
-      <h2>You are looking at: {this.state.pageTitle}</h2>
+      <h2>Most relevant result: {this.state.pageTitle}</h2>
       <form onSubmit={this.handleSubmit.bind(this)}>
           <div>
               <label>Search</label><br />
@@ -43,7 +48,7 @@ render() {
           <input type="submit" value="Search" />
       </form>
     </div>
-      <p></p>
+      <p>{this.state.beginning}</p>
 
     </div>
   );
@@ -115,40 +120,143 @@ render() {
       })
 
     ).then(function(res) {
-      console.log(typeof res);
       callback(JSON.parse(res));
     });
   }
 
   // to calculate average emotions for compilation of quotes
- calcEmote(data) {
-   var a = 0;
-   var b = 0;
-   var c = 0;
-   var d = 0;
-   var e = 0;
-   for (var x = 0; x < data.length; x++) {
-     a += data[x].anger;
-     b += data[x].joy;
-     c += data[x].fear;
-     d += data[x].sadness;
-     e += data[x].surprise;
-   }
+  calcEmote(data, arr) {
+    var a = 0;
+    var aMax = 0;
+    var aMaxTwo = 0;
+    var aIndex = 0;
+    var aIndexTwo = 0;
 
-    a = a / data.length;
-    b = b / data.length;
-    c = c / data.length;
-    d = d / data.length;
-    e = e / data.length;
-    console.log(a);
-    this.setState({anger: a});
-     this.setState({joy: b});
-     this.setState({fear: c});
-     this.setState({sadness: d});
-    this.setState({surprise: e});
-    console.log(this.state);
+    var b = 0;
+    var bMax = 0;
+    var bMaxTwo = 0;
+    var bIndex = 0;
+    var bIndexTwo = 0;
 
- }
+    var c = 0;
+    var cMax = 0;
+    var cMaxTwo = 0;
+    var cIndex = 0;
+    var cIndexTwo = 0;
+
+    var d = 0;
+    var dMax = 0;
+    var dMaxTwo = 0;
+    var dIndex = 0;
+    var dIndexTwo = 0;
+
+    var e = 0;
+    var eMax = 0;
+    var eMaxTwo = 0;
+    var eIndex = 0;
+    var eIndexTwo = 0;
+
+    for (var x = 0; x < data.length; x++) {
+      a += data[x].anger;
+      b += data[x].joy;
+      c += data[x].fear;
+      d += data[x].sadness;
+      e += data[x].surprise;
+
+      if (data[aIndex].anger < data[x].anger) {
+        aMaxTwo = aMax;
+        aMax = data[x].anger;
+        aIndexTwo = aIndex;
+        aIndex = x;
+      }
+
+      if (bMax < data[x].joy) {
+        bMaxTwo = bMax;
+        bMax = data[x].anger;
+        bIndexTwo = bIndex;
+        bIndex = x;
+     }
+
+     if (cMax < data[x].fear) {
+       cMaxTwo = cMax;
+       cMax = data[x].anger;
+       cIndexTwo = cIndex;
+       cIndex = x;
+     }
+
+     if (dMax < data[x].sadness) {
+       dMaxTwo = dMax;
+       dMax = data[x].anger;
+       dIndexTwo = dIndex;
+       dIndex = x;
+     }
+
+     if (eMax < data[x].surprise) {
+       eMaxTwo = eMax;
+       eMax = data[x].anger;
+       eIndexTwo = eIndex;
+       eIndex = x;
+     }
+    }
+
+     a = a / data.length;
+     b = b / data.length;
+     c = c / data.length;
+     d = d / data.length;
+     e = e / data.length;
+     console.log(a);
+     this.setState({anger: a});
+      this.setState({joy: b});
+      this.setState({fear: c});
+      this.setState({sadness: d});
+     this.setState({surprise: e});
+     console.log(this.state);
+
+     var nums = [a, b, c, d, e];
+     nums = nums.sort();
+     var max = nums[4];
+     if (max === a) {
+       this.setState({quoteType: "angry"});
+       this.setState({quote: arr[aIndex]});
+     } else if (max === b) {
+       this.setState({quoteType: "joy"});
+       this.setState({quote: arr[bIndex]});
+     } else if (max === c) {
+       this.setState({quoteType: "fear"});
+       this.setState({quote: arr[cIndex]});
+     } else if (max === d) {
+       this.setState({quoteType: "sadness"});
+       this.setState({quote: arr[dIndex]});
+     } else {
+       this.setState({quoteType: "surprise"});
+       this.setState({quote: arr[eIndex]});
+     }
+     var twoMax = nums[3];
+     if (twoMax === a) {
+       this.setState({quoteTypeTwo: "angry"});
+       this.setState({quoteTwo: arr[aIndex]});
+     } else if (twoMax === b) {
+       this.setState({quoteTypeTwo: "joy"});
+       this.setState({quoteTwo: arr[bIndex]});
+     } else if (twoMax === c) {
+       this.setState({quoteTypeTwo: "fear"});
+       this.setState({quoteTwo: arr[cIndex]});
+     } else if (twoMax === d) {
+       this.setState({quoteTypeTwo: "sadness"});
+       this.setState({quoteTwo: arr[dIndex]});
+     } else {
+       this.setState({quoteTypeTwo: "surprise"});
+       this.setState({quoteTwo: arr[eIndex]});
+     }
+
+
+     console.log(this.state.quoteType);
+     console.log(this.state.quote);
+     console.log(this.state.quoteTypeTwo);
+     console.log(this.state.quoteTwo);
+
+  }
+
 
   parseString(messy) {
     var re = /[a-zA-Z,'-\s]+[.?!]/g;
@@ -164,18 +272,27 @@ render() {
 
          this.setState({quotes: ['THIS IS A BAD SEARCH']});
        } else {
-       console.log(pageId);
        this.setState({pageTitle: tle});
        this.setState({isBadSearch: false});
        this.getData(pageId, function(revisions) {
-         console.log(this.state.pageTitle);
          var thing = revisions.query.pages[0].revisions[0].content;
-         var arr = this.parseString(thing);
+         var begre = /.*\=/;
+         var endidx = thing.match(begre).index;
+         console.log(endidx);
+         var begin = thing.substring(0, endidx);
+         var cleanreg1 = /\[|\]|{{.*}}|w:[^\|]*\||<.*>/;
+           var splitarr = begin.split(cleanreg1);
+           console.log(splitarr);
+           begin = splitarr.join(' ');
+         this.setState({beginning: begin});
+         console.log(this.state.beginning);
+         console.log(thing);
+         var arr = this.parseString(thing.substring(endidx));
          if (arr === null) {
            this.setState({quotes: ['Please be more specific']});
          } else {
          var emotions = this.getEmote(arr, function(dataset){
-           this.calcEmote(dataset.results);
+           this.calcEmote(dataset.results, arr);
          }.bind(this));
        }
        }.bind(this));
