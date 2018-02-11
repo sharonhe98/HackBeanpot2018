@@ -234,27 +234,20 @@ render() {
      var twoMax = nums[3];
      if (twoMax === a) {
        this.setState({quoteTypeTwo: "angry"});
-       this.setState({quoteTwo: arr[aIndex]});
+       this.setState({quoteTwo: arr[aIndexTwo]});
      } else if (twoMax === b) {
        this.setState({quoteTypeTwo: "joy"});
-       this.setState({quoteTwo: arr[bIndex]});
+       this.setState({quoteTwo: arr[bIndexTwo]});
      } else if (twoMax === c) {
        this.setState({quoteTypeTwo: "fear"});
-       this.setState({quoteTwo: arr[cIndex]});
+       this.setState({quoteTwo: arr[cIndexTwo]});
      } else if (twoMax === d) {
        this.setState({quoteTypeTwo: "sadness"});
-       this.setState({quoteTwo: arr[dIndex]});
+       this.setState({quoteTwo: arr[dIndexTwo]});
      } else {
        this.setState({quoteTypeTwo: "surprise"});
-       this.setState({quoteTwo: arr[eIndex]});
+       this.setState({quoteTwo: arr[eIndexTwo]});
      }
-
-
-     console.log(this.state.quoteType);
-     console.log(this.state.quote);
-     console.log(this.state.quoteTypeTwo);
-     console.log(this.state.quoteTwo);
-
   }
 
 
